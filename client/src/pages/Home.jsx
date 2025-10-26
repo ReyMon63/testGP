@@ -23,7 +23,7 @@ function Home() {
     setError('');
 
     try {
-      const response = await testAPI.verifyCode(code.trim().toUpperCase());
+      const response = await testAPI.verifyCode(code.trim());
       
       if (response.data.isAdmin) {
         // Redirigir al panel de administración
@@ -86,7 +86,7 @@ function Home() {
               className="code-input"
               placeholder="Ingresa tu código"
               value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              onChange={(e) => setCode(e.target.value)}
               onKeyPress={handleKeyPress}
               maxLength={20}
             />
