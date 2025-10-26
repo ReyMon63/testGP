@@ -14,16 +14,28 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 // Crear tablas si no existen
 db.serialize(() => {
-  // Tabla de candidatos
+  // Tabla de candidatos CON LOS CAMPOS CORRECTOS
   db.run(`
     CREATE TABLE IF NOT EXISTS candidates (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
+      nombre TEXT NOT NULL,
+      apellidos TEXT NOT NULL,
+      edad INTEGER NOT NULL,
       email TEXT UNIQUE NOT NULL,
-      phone TEXT,
-      code TEXT UNIQUE NOT NULL,
-      code_used INTEGER DEFAULT 0,
+      puesto TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Tabla de códigos de verificación
+  db.run(`
+    CREATE TABLE IF NOT EXISTS test_codes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      candidate_id INTEGER NOT NULL,
+      code TEXT UNIQUE NOT NULL,
+      used INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (candidate_id) REFERENCES candidates (id)
     )
   `);
 
