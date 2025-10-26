@@ -3,12 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Register.css';
 
 function Register() {
-  const [nombre, setNombre] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [formData, setFormData] = useState({
+    nombre: '',
+    apellidos: '',
+    edad: '',
+    email: '',
+    puesto: ''
+  });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,11 +31,7 @@ function Register() {
       const response = await fetch('/api/candidates/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: nombre,
-          email: email,
-          phone: telefono
-        })
+        body: JSON.stringify(formData)
       });
 
       const data = await response.json();
@@ -49,44 +57,78 @@ function Register() {
       <div className="register-card">
         <div className="register-header">
           <h1>📋 Registro de Candidato</h1>
-          <p>Ingresa tus datos para recibir tu código de acceso</p>
+          <p>Completa tus datos para recibir el código de acceso al test</p>
         </div>
 
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
-            <label htmlFor="nombre">Nombre Completo *</label>
+            <label htmlFor="nombre">Nombre *</label>
             <input
               type="text"
               id="nombre"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              placeholder="Juan Pérez García"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              placeholder="Tu nombre"
               required
               disabled={loading}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Correo Electrónico *</label>
+            <label htmlFor="apellidos">Apellidos *</label>
+            <input
+              type="text"
+              id="apellidos"
+              name="apellidos"
+              value={formData.apellidos}
+              onChange={handleChange}
+              placeholder="Tus apellidos"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="edad">Edad *</label>
+            <input
+              type="number"
+              id="edad"
+              name="edad"
+              value={formData.edad}
+              onChange={handleChange}
+              placeholder="Tu edad"
+              min="18"
+              max="100"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email *</label>
             <input
               type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu.correo@ejemplo.com"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="tu@email.com"
               required
               disabled={loading}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="telefono">Teléfono</label>
+            <label htmlFor="puesto">Puesto Actual *</label>
             <input
-              type="tel"
-              id="telefono"
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
-              placeholder="+52 123 456 7890"
+              type="text"
+              id="puesto"
+              name="puesto"
+              value={formData.puesto}
+              onChange={handleChange}
+              placeholder="Ej: Gerente de Ventas"
+              required
               disabled={loading}
             />
           </div>
