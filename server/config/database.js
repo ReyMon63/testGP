@@ -14,7 +14,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 // Crear tablas si no existen
 db.serialize(() => {
-  // Tabla de candidatos CON LOS CAMPOS CORRECTOS
+  // Tabla de candidatos
   db.run(`
     CREATE TABLE IF NOT EXISTS candidates (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,37 +34,27 @@ db.serialize(() => {
       candidate_id INTEGER NOT NULL,
       code TEXT UNIQUE NOT NULL,
       used INTEGER DEFAULT 0,
+      used_at DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (candidate_id) REFERENCES candidates (id)
     )
   `);
 
-  // Tabla de respuestas del test
+  // Tabla de resultados del test
   db.run(`
-    CREATE TABLE IF NOT EXISTS test_responses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      candidate_id INTEGER NOT NULL,
-      question_id INTEGER NOT NULL,
-      answer_most TEXT NOT NULL,
-      answer_least TEXT NOT NULL,
-      completed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (candidate_id) REFERENCES candidates (id)
-    )
-  `);
-
-  // Tabla de resultados DISC
-  db.run(`
-    CREATE TABLE IF NOT EXISTS disc_results (
+    CREATE TABLE IF NOT EXISTS test_results (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       candidate_id INTEGER UNIQUE NOT NULL,
-      d_score INTEGER DEFAULT 0,
-      i_score INTEGER DEFAULT 0,
-      s_score INTEGER DEFAULT 0,
-      c_score INTEGER DEFAULT 0,
-      primary_trait TEXT,
-      secondary_trait TEXT,
+      code_id INTEGER NOT NULL,
+      dominance_score INTEGER DEFAULT 0,
+      influence_score INTEGER DEFAULT 0,
+      steadiness_score INTEGER DEFAULT 0,
+      compliance_score INTEGER DEFAULT 0,
+      primary_profile TEXT,
+      answers TEXT,
       completed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (candidate_id) REFERENCES candidates (id)
+      FOREIGN KEY (candidate_id) REFERENCES candidates (id),
+      FOREIGN KEY (code_id) REFERENCES test_codes (id)
     )
   `);
 });
