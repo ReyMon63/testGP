@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
-const { sendVerificationCode } = require('../config/email');
+const { sendTestCode } = require('../config/email');
 const { generateSecureCode } = require('../utils/helpers');
 
 /**
@@ -72,7 +72,7 @@ router.post('/register', async (req, res) => {
 
               // Enviar email con el código
               try {
-                await sendVerificationCode(email, nombre, code);
+                await sendTestCode(email, nombre, code);
                 
                 res.json({ 
                   success: true,
@@ -87,7 +87,7 @@ router.post('/register', async (req, res) => {
                   res.json({
                     success: true,
                     message: 'Registro exitoso. (Error al enviar email - modo desarrollo)',
-                    code: code, // Solo en desarrollo
+                    code: code,
                     candidateId: candidateId
                   });
                 } else {
