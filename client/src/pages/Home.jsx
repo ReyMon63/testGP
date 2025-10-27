@@ -14,7 +14,9 @@ function Home() {
   };
 
   const handleStart = async () => {
-    if (!code.trim()) {
+    const trimmedCode = code.trim();
+    
+    if (!trimmedCode) {
       setError('Por favor ingresa tu código de acceso');
       return;
     }
@@ -23,13 +25,12 @@ function Home() {
     setError('');
 
     try {
-      const response = await testAPI.verifyCode(code.trim());
+      // Enviar el código exactamente como fue ingresado (sin modificar)
+      const response = await testAPI.verifyCode(trimmedCode);
       
       if (response.data.isAdmin) {
-        // Redirigir al panel de administración
-        navigate('/admin', { state: { code: code.trim() } });
+        navigate('/admin', { state: { code: trimmedCode } });
       } else {
-        // Redirigir al test con los datos del candidato
         navigate('/test', { 
           state: { 
             testData: response.data 
@@ -89,6 +90,7 @@ function Home() {
               onChange={(e) => setCode(e.target.value)}
               onKeyPress={handleKeyPress}
               maxLength={20}
+              autoComplete="off"
             />
             {error && <p className="error-message">{error}</p>}
             <button 
