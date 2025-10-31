@@ -191,12 +191,14 @@ router.get('/export-csv', (req, res) => {
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment; filename=resultados-disc-${Date.now()}.csv`);
         
-        // Agregar BOM para que Excel reconozca UTF-8
-        res.write('\ufeff');
-        res.send(csv);
+        // Enviar CSV con BOM para que Excel reconozca UTF-8
+        res.send('\ufeff' + csv);
       } catch (error) {
         console.error('Error generando CSV:', error);
-        res.status(500).json({ error: 'Error al generar CSV' });
+        // Solo enviar error si no se han enviado headers todavía
+        if (!res.headersSent) {
+          return res.status(500).json({ error: 'Error al generar CSV' });
+        }
       }
     }
   );
